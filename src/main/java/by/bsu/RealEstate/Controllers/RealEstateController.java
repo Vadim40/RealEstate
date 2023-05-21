@@ -28,9 +28,9 @@ public class RealEstateController {
 
     @GetMapping("/all/{offset}/{pageSize}")
     public ResponseEntity<Page<RealEstateDTO>> getRealEstates(@PathVariable int offset, @PathVariable int pageSize) {
-        if (!realEstateService.findAllRealEstateWithPagination(offset, pageSize).isEmpty()) {
+        if (!realEstateService.findRealEstatesWithPagination(offset, pageSize).isEmpty()) {
             RealEstateMapper realEstateMapper = new RealEstateMapper();
-            Page<RealEstate> realEstates = realEstateService.findAllRealEstateWithPagination(offset, pageSize);
+            Page<RealEstate> realEstates = realEstateService.findRealEstatesWithPagination(offset, pageSize);
             Page<RealEstateDTO> realEstateDTOS = realEstates.map(new Function<RealEstate, RealEstateDTO>() {
                 @Override
                 public RealEstateDTO apply(RealEstate realEstate) {
@@ -45,9 +45,9 @@ public class RealEstateController {
     @GetMapping("/all/{offset}/{pageSize}/{field}")
     public ResponseEntity<Page<RealEstateDTO>> getRealEstatesSort(@PathVariable int offset,
                                                                   @PathVariable int pageSize, @PathVariable String field) {
-        if (!realEstateService.findAllRealEstateWithPaginationAndSorting(offset, pageSize, field).isEmpty()) {
+        if (!realEstateService.findRealEstatesWithPaginationAndSorting(offset, pageSize, field).isEmpty()) {
             RealEstateMapper realEstateMapper = new RealEstateMapper();
-            Page<RealEstate> realEstates = realEstateService.findAllRealEstateWithPaginationAndSorting(offset, pageSize, field);
+            Page<RealEstate> realEstates = realEstateService.findRealEstatesWithPaginationAndSorting(offset, pageSize, field);
             Page<RealEstateDTO> realEstateDTOS = realEstates.map(new Function<RealEstate, RealEstateDTO>() {
                 @Override
                 public RealEstateDTO apply(RealEstate realEstate) {
@@ -62,9 +62,9 @@ public class RealEstateController {
     @GetMapping("/all/{offset}/{pageSize}/price")
     public ResponseEntity<Page<RealEstateDTO>> getRealEstatesWithPrice(@PathVariable int offset, @PathVariable int pageSize,
                                                                        @RequestParam int leftPrice, @RequestParam int rightPrice) {
-        if (!realEstateService.findAllWithPrice(leftPrice, rightPrice, offset, pageSize).isEmpty()) {
+        if (!realEstateService.findRealEstatesWithPrice(leftPrice, rightPrice, offset, pageSize).isEmpty()) {
             RealEstateMapper realEstateMapper = new RealEstateMapper();
-            Page<RealEstate> realEstates = realEstateService.findAllWithPrice(leftPrice, rightPrice, offset, pageSize);
+            Page<RealEstate> realEstates = realEstateService.findRealEstatesWithPrice(leftPrice, rightPrice, offset, pageSize);
             Page<RealEstateDTO> realEstateDTOS = realEstates.map(new Function<RealEstate, RealEstateDTO>() {
                 @Override
                 public RealEstateDTO apply(RealEstate realEstate) {
@@ -80,9 +80,26 @@ public class RealEstateController {
     @GetMapping("/all/{offset}/{pageSize}/count_rooms")
     public ResponseEntity<Page<RealEstateDTO>> getRealEstatesWithCountRooms(@PathVariable int offset, @PathVariable int pageSize,
                                                                             @RequestParam int leftCountRooms, @RequestParam int rightCountRooms) {
-        if (!realEstateService.findAllWithCountRooms(leftCountRooms, rightCountRooms, offset, pageSize).isEmpty()) {
+        if (!realEstateService.findRealEstatesWithCountRooms(leftCountRooms, rightCountRooms, offset, pageSize).isEmpty()) {
             RealEstateMapper realEstateMapper = new RealEstateMapper();
-            Page<RealEstate> realEstates = realEstateService.findAllWithCountRooms(leftCountRooms, rightCountRooms, offset, pageSize);
+            Page<RealEstate> realEstates = realEstateService.findRealEstatesWithCountRooms(leftCountRooms, rightCountRooms, offset, pageSize);
+            Page<RealEstateDTO> realEstateDTOS = realEstates.map(new Function<RealEstate, RealEstateDTO>() {
+                @Override
+                public RealEstateDTO apply(RealEstate realEstate) {
+                    return realEstateMapper.mapRealEstateToRealEstateDTO(realEstate);
+                }
+            });
+            return new ResponseEntity<>(realEstateDTOS, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    @GetMapping("/allBy/{userId}/{offset}/{pageSize}")
+    public ResponseEntity<Page<RealEstateDTO>> getRealEstatesByUserId(@PathVariable long userId,
+                                                                      @PathVariable int offset,
+                                                                      @PathVariable int pageSize) {
+        if (!realEstateService.findRealEstatesByUserId(userId, offset, pageSize).isEmpty()) {
+            RealEstateMapper realEstateMapper = new RealEstateMapper();
+            Page<RealEstate> realEstates = realEstateService.findRealEstatesByUserId(userId, offset, pageSize);
             Page<RealEstateDTO> realEstateDTOS = realEstates.map(new Function<RealEstate, RealEstateDTO>() {
                 @Override
                 public RealEstateDTO apply(RealEstate realEstate) {

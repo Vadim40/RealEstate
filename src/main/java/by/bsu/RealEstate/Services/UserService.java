@@ -1,32 +1,28 @@
 package by.bsu.RealEstate.Services;
 
-import by.bsu.RealEstate.Models.RealEstate;
 import by.bsu.RealEstate.Models.User;
-import by.bsu.RealEstate.Repositories.RealEstateRepository;
 import by.bsu.RealEstate.Repositories.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class UserService {
     private UserRepository userRepository;
 
-    private RealEstateRepository realEstateRepository;
 
-    public UserService(UserRepository userRepository, RealEstateRepository realEstateRepository) {
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.realEstateRepository = realEstateRepository;
+
     }
 
-    public List<User> findAll() {
+    public List<User> findUsers() {
         return userRepository.findAll();
     }
 
-    public Page<User> findAllUsersWithPagination(int offset, int pageSize) {
+    public Page<User> findUsersWithPagination(int offset, int pageSize) {
         return userRepository.findAll(PageRequest.of(offset, pageSize));
     }
 
@@ -61,7 +57,5 @@ public class UserService {
         return false;
     }
 
-    public ArrayList<RealEstate> getRealEstateByUserId(long id) {
-        return realEstateRepository.getRealEstateByUserId(id);
-    }
+
 }

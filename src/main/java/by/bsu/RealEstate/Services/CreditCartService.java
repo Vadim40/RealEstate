@@ -16,6 +16,9 @@ public class CreditCartService {
     }
 
 
+    public List<CreditCard> findCreditCards(){
+        return creditCardRepository.findAll();
+    }
     public List<CreditCard> findCreditCardsByUserId(long id) {
         return creditCardRepository.findCreditCardsByUserId(id);
     }
@@ -41,7 +44,7 @@ public class CreditCartService {
         return false;
     }
 
-    public boolean delete(long id) {
+    public boolean deleteCreditCard(long id) {
         if (creditCardRepository.findById(id).isPresent()) {
             creditCardRepository.deleteById(id);
             return true;

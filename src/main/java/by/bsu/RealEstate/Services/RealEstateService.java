@@ -29,22 +29,27 @@ public class RealEstateService {
 //        }
 //    }
 
-    public Page<RealEstate> findAllWithPrice(int leftPrice, int rightPrice, int offset, int pageSize) {
-        return realEstateRepository.findByPrice(leftPrice, rightPrice, PageRequest.of(offset, pageSize));
+    public Page<RealEstate> findRealEstatesWithPrice(int leftPrice, int rightPrice,
+                                                     int offset, int pageSize) {
+        return realEstateRepository.findRealEstatesByPrice(leftPrice, rightPrice, PageRequest.of(offset, pageSize));
     }
 
-    public Page<RealEstate> findAllWithCountRooms(int leftCountRooms, int righCountRooms, int offset, int pageSize) {
-        return realEstateRepository.findByCountRooms(leftCountRooms, righCountRooms, PageRequest.of(offset, pageSize));
+    public Page<RealEstate> findRealEstatesWithCountRooms(int leftCountRooms, int righCountRooms,
+                                                          int offset, int pageSize) {
+        return realEstateRepository.findRealEstatesByCountRooms(leftCountRooms, righCountRooms,
+                PageRequest.of(offset, pageSize));
     }
 
-    public Page<RealEstate> findAllRealEstateWithPagination(int offset, int pageSize) {
+    public Page<RealEstate> findRealEstatesWithPagination(int offset, int pageSize) {
         return realEstateRepository.findAll(PageRequest.of(offset, pageSize));
     }
 
-    public Page<RealEstate> findAllRealEstateWithPaginationAndSorting(int offset, int pageSize, String field) {
+    public Page<RealEstate> findRealEstatesWithPaginationAndSorting(int offset, int pageSize, String field) {
         return realEstateRepository.findAll(PageRequest.of(offset, pageSize).withSort(Sort.by(field)));
     }
-
+    public Page<RealEstate> findRealEstatesByUserId(long id, int offset, int pageSize) {
+        return realEstateRepository.findRealEstatesByUserId(id, PageRequest.of(offset,pageSize));
+    }
     public RealEstate findRealEstateById(long id) {
         return realEstateRepository.findById(id).orElseThrow(() -> new RuntimeException());
     }
