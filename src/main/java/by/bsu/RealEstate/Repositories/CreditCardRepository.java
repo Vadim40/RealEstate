@@ -8,6 +8,6 @@ import java.util.List;
 
 @Repository
 public interface CreditCardRepository extends JpaRepository<CreditCard, Long> {
-    public List<CreditCard> findCreditCardsByUserId(long id);
+     List<CreditCard> findCreditCardsByUserId(long id);
 
 }

@@ -61,7 +61,7 @@ public class CreditCardController {
         CreditCardMapper creditCardMapper = new CreditCardMapper();
         CreditCard creditCard = creditCardMapper.mapCreditCardDtoToCreditCard(creditCardDTO);
         creditCartService.saveCreditCard(creditCard);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping("/{id}/edit")
@@ -73,7 +73,7 @@ public class CreditCardController {
         if (creditCartService.updateCreditCard(id, creditCardMapper.mapCreditCardDtoToCreditCard(creditCardDTO)))
             return new ResponseEntity<>(HttpStatus.OK);
         else
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
     @DeleteMapping("/{id}/delete")
     public ResponseEntity deleteCreditCard(@PathVariable long id){

@@ -10,10 +10,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RealEstateRepository extends JpaRepository<RealEstate, Long> {
     @Query("SELECT r FROM RealEstate r WHERE r.price>=?1 AND r.price<?2")
-    public Page<RealEstate> findRealEstatesByPrice(int lefPrice, int rightPrice, Pageable pageable);
+     Page<RealEstate> findRealEstatesByPrice(int lefPrice, int rightPrice, Pageable pageable);
 
     @Query("SELECT r FROM RealEstate r WHERE r.countRooms>=?1 AND r.countRooms<=?2")
-    public Page<RealEstate> findRealEstatesByCountRooms(int leftCountRooms, int rightCountRooms, Pageable pageable);
+     Page<RealEstate> findRealEstatesByCountRooms(int leftCountRooms, int rightCountRooms, Pageable pageable);
 
-    public Page<RealEstate> findRealEstatesByUserId(long userId, Pageable pageable);
+     Page<RealEstate> findRealEstatesByUserId(long userId, Pageable pageable);
 }

@@ -34,9 +34,9 @@ public class RealEstateService {
         return realEstateRepository.findRealEstatesByPrice(leftPrice, rightPrice, PageRequest.of(offset, pageSize));
     }
 
-    public Page<RealEstate> findRealEstatesWithCountRooms(int leftCountRooms, int righCountRooms,
+    public Page<RealEstate> findRealEstatesWithCountRooms(int leftCountRooms, int rightCountRooms,
                                                           int offset, int pageSize) {
-        return realEstateRepository.findRealEstatesByCountRooms(leftCountRooms, righCountRooms,
+        return realEstateRepository.findRealEstatesByCountRooms(leftCountRooms, rightCountRooms,
                 PageRequest.of(offset, pageSize));
     }
 
@@ -51,7 +51,7 @@ public class RealEstateService {
         return realEstateRepository.findRealEstatesByUserId(id, PageRequest.of(offset,pageSize));
     }
     public RealEstate findRealEstateById(long id) {
-        return realEstateRepository.findById(id).orElseThrow(() -> new RuntimeException());
+        return realEstateRepository.findById(id).orElseThrow(RuntimeException::new);
     }
 
     public void saveRealEstate(RealEstate realEstate) {

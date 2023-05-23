@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 public class UserService {
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
 
     public UserService(UserRepository userRepository) {
@@ -27,7 +27,7 @@ public class UserService {
     }
 
     public User findUserById(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new RuntimeException());
+        return userRepository.findById(id).orElseThrow(RuntimeException::new);
     }
 
     public void saveUser(User user) {

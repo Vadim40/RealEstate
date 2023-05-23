@@ -24,7 +24,7 @@ public class CreditCartService {
     }
 
     public CreditCard findCreditCardById(long id) {
-        return creditCardRepository.findById(id).orElseThrow(() -> new RuntimeException());
+        return creditCardRepository.findById(id).orElseThrow(RuntimeException::new);
     }
 
     public void saveCreditCard(CreditCard creditCard) {
@@ -34,7 +34,7 @@ public class CreditCartService {
 
     public boolean updateCreditCard(long id, CreditCard creditCard) {
         if (creditCardRepository.findById(id).isPresent()) {
-            CreditCard creditCardUpdate = new CreditCard();
+            CreditCard creditCardUpdate = findCreditCardById(id);
             creditCardUpdate.setUserId(creditCard.getUserId());
             creditCardUpdate.setCardNumber(creditCard.getCardNumber());
             creditCardUpdate.setDate(creditCard.getDate());

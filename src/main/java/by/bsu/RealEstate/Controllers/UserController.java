@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.function.Function;
 
 @RestController
 @RequestMapping("/user")
@@ -34,12 +33,7 @@ public class UserController {
         if (!userService.findUsers().isEmpty()) {
             UserMapper userMapper = new UserMapper();
             Page<User> users = userService.findUsersWithPagination(offset, pageSize);
-            Page<UserDTO> userDTOS = users.map(new Function<User, UserDTO>() {
-                @Override
-                public UserDTO apply(User user) {
-                    return userMapper.mapUserToUserDTO(user);
-                }
-            });
+            Page<UserDTO> userDTOS = users.map(userMapper::mapUserToUserDTO);
             return new ResponseEntity<>(userDTOS, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -60,7 +54,7 @@ public class UserController {
             userService.saveUser(userMapper.mapUserDTOToUser(userDTO));
             return new ResponseEntity<>(HttpStatus.CREATED);
         }
-        return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @PutMapping("/{id}/edit")
@@ -68,12 +62,12 @@ public class UserController {
                                    BindingResult bindingResult) {
         UserMapper userMapper = new UserMapper();
         if (bindingResult.hasErrors()) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         if( userService.updateUser(id, userMapper.mapUserDTOToUser(userDTO))){
-        return new ResponseEntity(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.CREATED);
         }
-        return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @DeleteMapping("/{id}/delete")

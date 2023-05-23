@@ -31,12 +31,7 @@ public class RealEstateController {
         if (!realEstateService.findRealEstatesWithPagination(offset, pageSize).isEmpty()) {
             RealEstateMapper realEstateMapper = new RealEstateMapper();
             Page<RealEstate> realEstates = realEstateService.findRealEstatesWithPagination(offset, pageSize);
-            Page<RealEstateDTO> realEstateDTOS = realEstates.map(new Function<RealEstate, RealEstateDTO>() {
-                @Override
-                public RealEstateDTO apply(RealEstate realEstate) {
-                    return realEstateMapper.mapRealEstateToRealEstateDTO(realEstate);
-                }
-            });
+            Page<RealEstateDTO> realEstateDTOS = realEstates.map(realEstateMapper::mapRealEstateToRealEstateDTO);
             return new ResponseEntity<>(realEstateDTOS, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -48,12 +43,7 @@ public class RealEstateController {
         if (!realEstateService.findRealEstatesWithPaginationAndSorting(offset, pageSize, field).isEmpty()) {
             RealEstateMapper realEstateMapper = new RealEstateMapper();
             Page<RealEstate> realEstates = realEstateService.findRealEstatesWithPaginationAndSorting(offset, pageSize, field);
-            Page<RealEstateDTO> realEstateDTOS = realEstates.map(new Function<RealEstate, RealEstateDTO>() {
-                @Override
-                public RealEstateDTO apply(RealEstate realEstate) {
-                    return realEstateMapper.mapRealEstateToRealEstateDTO(realEstate);
-                }
-            });
+            Page<RealEstateDTO> realEstateDTOS = realEstates.map(realEstateMapper::mapRealEstateToRealEstateDTO);
             return new ResponseEntity<>(realEstateDTOS, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -65,12 +55,7 @@ public class RealEstateController {
         if (!realEstateService.findRealEstatesWithPrice(leftPrice, rightPrice, offset, pageSize).isEmpty()) {
             RealEstateMapper realEstateMapper = new RealEstateMapper();
             Page<RealEstate> realEstates = realEstateService.findRealEstatesWithPrice(leftPrice, rightPrice, offset, pageSize);
-            Page<RealEstateDTO> realEstateDTOS = realEstates.map(new Function<RealEstate, RealEstateDTO>() {
-                @Override
-                public RealEstateDTO apply(RealEstate realEstate) {
-                    return realEstateMapper.mapRealEstateToRealEstateDTO(realEstate);
-                }
-            });
+            Page<RealEstateDTO> realEstateDTOS = realEstates.map(realEstateMapper::mapRealEstateToRealEstateDTO);
             return new ResponseEntity<>(realEstateDTOS, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -83,12 +68,7 @@ public class RealEstateController {
         if (!realEstateService.findRealEstatesWithCountRooms(leftCountRooms, rightCountRooms, offset, pageSize).isEmpty()) {
             RealEstateMapper realEstateMapper = new RealEstateMapper();
             Page<RealEstate> realEstates = realEstateService.findRealEstatesWithCountRooms(leftCountRooms, rightCountRooms, offset, pageSize);
-            Page<RealEstateDTO> realEstateDTOS = realEstates.map(new Function<RealEstate, RealEstateDTO>() {
-                @Override
-                public RealEstateDTO apply(RealEstate realEstate) {
-                    return realEstateMapper.mapRealEstateToRealEstateDTO(realEstate);
-                }
-            });
+            Page<RealEstateDTO> realEstateDTOS = realEstates.map(realEstateMapper::mapRealEstateToRealEstateDTO);
             return new ResponseEntity<>(realEstateDTOS, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -100,12 +80,7 @@ public class RealEstateController {
         if (!realEstateService.findRealEstatesByUserId(userId, offset, pageSize).isEmpty()) {
             RealEstateMapper realEstateMapper = new RealEstateMapper();
             Page<RealEstate> realEstates = realEstateService.findRealEstatesByUserId(userId, offset, pageSize);
-            Page<RealEstateDTO> realEstateDTOS = realEstates.map(new Function<RealEstate, RealEstateDTO>() {
-                @Override
-                public RealEstateDTO apply(RealEstate realEstate) {
-                    return realEstateMapper.mapRealEstateToRealEstateDTO(realEstate);
-                }
-            });
+            Page<RealEstateDTO> realEstateDTOS = realEstates.map(realEstateMapper::mapRealEstateToRealEstateDTO);
             return new ResponseEntity<>(realEstateDTOS, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
