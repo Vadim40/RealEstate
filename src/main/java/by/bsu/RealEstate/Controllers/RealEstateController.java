@@ -98,21 +98,22 @@ public class RealEstateController {
     @PostMapping("/new")
     public ResponseEntity createRealEstate(@RequestBody @Valid RealEstateDTO realEstateDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            RealEstateMapper realEstateMapper = new RealEstateMapper();
-            realEstateService.saveRealEstate(realEstateMapper.mapRealEstateDTOToRealEstate(realEstateDTO));
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        RealEstateMapper realEstateMapper = new RealEstateMapper();
+        realEstateService.saveRealEstate(realEstateMapper.mapRealEstateDTOToRealEstate(realEstateDTO));
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
 
     @PutMapping("/{id}/edit")
     public ResponseEntity editRealEstate(@PathVariable("id") long id, @RequestBody @Valid RealEstateDTO realEstateDTO,
                                          BindingResult bindingResult) {
-        RealEstateMapper realEstateMapper = new RealEstateMapper();
+
         if (bindingResult.hasErrors()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+        RealEstateMapper realEstateMapper = new RealEstateMapper();
         if(realEstateService.updateRealEstate(id, realEstateMapper.mapRealEstateDTOToRealEstate(realEstateDTO))) {
             return new ResponseEntity(HttpStatus.CREATED);
         }

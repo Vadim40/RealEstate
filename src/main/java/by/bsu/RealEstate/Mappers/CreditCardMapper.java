@@ -19,7 +19,7 @@ public class CreditCardMapper {
         CreditCard creditCard = new CreditCard();
         creditCard.setCardNumber(creditCardDto.getCardNumber());
         creditCard.setDate(creditCardDto.getDate());
-        creditCard.setCVV(creditCard.getCVV());
+        creditCard.setCVV(creditCardDto.getCVV());
         return creditCard;
     }
 }

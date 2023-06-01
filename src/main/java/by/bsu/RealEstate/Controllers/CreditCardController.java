@@ -56,7 +56,7 @@ public class CreditCardController {
     @PostMapping("/new")
     public ResponseEntity createCreditCard(@RequestBody @Valid CreditCardDTO creditCardDTO,
                                            BindingResult bindingResult) {
-        if (!bindingResult.hasErrors())
+        if (bindingResult.hasErrors())
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         CreditCardMapper creditCardMapper = new CreditCardMapper();
         CreditCard creditCard = creditCardMapper.mapCreditCardDtoToCreditCard(creditCardDTO);
@@ -67,7 +67,7 @@ public class CreditCardController {
     @PutMapping("/{id}/edit")
     public ResponseEntity editCreditCard(@PathVariable long id, @RequestBody @Valid CreditCardDTO creditCardDTO,
                                          BindingResult bindingResult) {
-        if (!bindingResult.hasErrors())
+        if (bindingResult.hasErrors())
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         CreditCardMapper creditCardMapper = new CreditCardMapper();
         if (creditCartService.updateCreditCard(id, creditCardMapper.mapCreditCardDtoToCreditCard(creditCardDTO)))

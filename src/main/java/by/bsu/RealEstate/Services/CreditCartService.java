@@ -39,6 +39,7 @@ public class CreditCartService {
             creditCardUpdate.setCardNumber(creditCard.getCardNumber());
             creditCardUpdate.setDate(creditCard.getDate());
             creditCardUpdate.setCVV(creditCard.getCVV());
+            creditCardRepository.save(creditCardUpdate);
             return true;
         }
         return false;

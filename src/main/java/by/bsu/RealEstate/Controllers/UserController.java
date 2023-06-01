@@ -3,30 +3,26 @@ package by.bsu.RealEstate.Controllers;
 import by.bsu.RealEstate.Mappers.UserMapper;
 import by.bsu.RealEstate.Models.DTO.UserDTO;
 import by.bsu.RealEstate.Models.User;
-import by.bsu.RealEstate.Services.CreditCartService;
-import by.bsu.RealEstate.Services.RealEstateService;
 import by.bsu.RealEstate.Services.UserService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 
 @RestController
 @RequestMapping("/user")
+@RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-    private final RealEstateService realEstateService;
-    private final CreditCartService creditCartService;
 
-    public UserController(UserService userService, RealEstateService realEstateService,
-                          CreditCartService creditCartService) {
-        this.userService = userService;
-        this.realEstateService = realEstateService;
-        this.creditCartService = creditCartService;
-    }
+
+
+
 
     @GetMapping("/all/{offset}/{pageSize}")
     public ResponseEntity<Page<UserDTO>> getAll(@PathVariable int offset, @PathVariable int pageSize) {
@@ -50,11 +46,12 @@ public class UserController {
     @PostMapping("/new")
     public ResponseEntity createUser(@RequestBody @Valid UserDTO userDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            UserMapper userMapper = new UserMapper();
-            userService.saveUser(userMapper.mapUserDTOToUser(userDTO));
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        UserMapper userMapper = new UserMapper();
+        User user=userMapper.mapUserDTOToUser(userDTO);
+        userService.saveUser(user);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}/edit")
