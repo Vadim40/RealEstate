@@ -3,6 +3,7 @@ package by.bsu.RealEstate.Controllers;
 import by.bsu.RealEstate.Mappers.RealEstateMapper;
 import by.bsu.RealEstate.Models.DTO.RealEstateDTO;
 import by.bsu.RealEstate.Models.RealEstate;
+import by.bsu.RealEstate.Services.CustomUserDetailsService;
 import by.bsu.RealEstate.Services.RealEstateService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,78 +13,74 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.function.Function;
-
 @RestController
 @RequestMapping("/estate")
 public class RealEstateController {
     private final RealEstateService realEstateService;
+    private final CustomUserDetailsService customUserDetailsService;
+
 
     @Autowired
-    public RealEstateController(RealEstateService realEstateService) {
+    public RealEstateController(RealEstateService realEstateService, CustomUserDetailsService customUserDetailsService) {
 
         this.realEstateService = realEstateService;
+        this.customUserDetailsService = customUserDetailsService;
     }
+    private ResponseEntity<Page<RealEstateDTO>> getPageResponseEntity(Page<RealEstate> realEstates) {
+        if (realEstates.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        RealEstateMapper realEstateMapper = new RealEstateMapper();
+        Page<RealEstateDTO> realEstateDTOS = realEstates.map(realEstateMapper::mapRealEstateToRealEstateDTO);
+        return new ResponseEntity<>(realEstateDTOS, HttpStatus.OK);
+    }
+
 
 
     @GetMapping("/all/{offset}/{pageSize}")
     public ResponseEntity<Page<RealEstateDTO>> getRealEstates(@PathVariable int offset, @PathVariable int pageSize) {
-        if (!realEstateService.findRealEstatesWithPagination(offset, pageSize).isEmpty()) {
-            RealEstateMapper realEstateMapper = new RealEstateMapper();
-            Page<RealEstate> realEstates = realEstateService.findRealEstatesWithPagination(offset, pageSize);
-            Page<RealEstateDTO> realEstateDTOS = realEstates.map(realEstateMapper::mapRealEstateToRealEstateDTO);
-            return new ResponseEntity<>(realEstateDTOS, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        Page<RealEstate> realEstates = realEstateService.findRealEstatesWithPagination(offset, pageSize);
+        return getPageResponseEntity(realEstates);
+
     }
 
+
     @GetMapping("/all/{offset}/{pageSize}/{field}")
-    public ResponseEntity<Page<RealEstateDTO>> getRealEstatesSort(@PathVariable int offset,
-                                                                  @PathVariable int pageSize, @PathVariable String field) {
-        if (!realEstateService.findRealEstatesWithPaginationAndSorting(offset, pageSize, field).isEmpty()) {
-            RealEstateMapper realEstateMapper = new RealEstateMapper();
-            Page<RealEstate> realEstates = realEstateService.findRealEstatesWithPaginationAndSorting(offset, pageSize, field);
-            Page<RealEstateDTO> realEstateDTOS = realEstates.map(realEstateMapper::mapRealEstateToRealEstateDTO);
-            return new ResponseEntity<>(realEstateDTOS, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<Page<RealEstateDTO>> getRealEstatesSort(
+            @PathVariable int offset,
+            @PathVariable int pageSize,
+            @PathVariable String field) {
+        Page<RealEstate> realEstates = realEstateService.findRealEstatesWithPaginationAndSorting(offset, pageSize, field);
+        return getPageResponseEntity(realEstates);
+
     }
 
     @GetMapping("/all/{offset}/{pageSize}/price")
-    public ResponseEntity<Page<RealEstateDTO>> getRealEstatesWithPrice(@PathVariable int offset, @PathVariable int pageSize,
-                                                                       @RequestParam int leftPrice, @RequestParam int rightPrice) {
-        if (!realEstateService.findRealEstatesWithPrice(leftPrice, rightPrice, offset, pageSize).isEmpty()) {
-            RealEstateMapper realEstateMapper = new RealEstateMapper();
-            Page<RealEstate> realEstates = realEstateService.findRealEstatesWithPrice(leftPrice, rightPrice, offset, pageSize);
-            Page<RealEstateDTO> realEstateDTOS = realEstates.map(realEstateMapper::mapRealEstateToRealEstateDTO);
-            return new ResponseEntity<>(realEstateDTOS, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<Page<RealEstateDTO>> getRealEstatesWithPrice(
+            @PathVariable int offset, @PathVariable int pageSize,
+            @RequestParam int leftPrice, @RequestParam int rightPrice) {
+        Page<RealEstate> realEstates = realEstateService.findRealEstatesWithPrice(leftPrice, rightPrice, offset, pageSize);
+        return getPageResponseEntity(realEstates);
+
     }
 
 
     @GetMapping("/all/{offset}/{pageSize}/count_rooms")
-    public ResponseEntity<Page<RealEstateDTO>> getRealEstatesWithCountRooms(@PathVariable int offset, @PathVariable int pageSize,
-                                                                            @RequestParam int leftCountRooms, @RequestParam int rightCountRooms) {
-        if (!realEstateService.findRealEstatesWithCountRooms(leftCountRooms, rightCountRooms, offset, pageSize).isEmpty()) {
-            RealEstateMapper realEstateMapper = new RealEstateMapper();
-            Page<RealEstate> realEstates = realEstateService.findRealEstatesWithCountRooms(leftCountRooms, rightCountRooms, offset, pageSize);
-            Page<RealEstateDTO> realEstateDTOS = realEstates.map(realEstateMapper::mapRealEstateToRealEstateDTO);
-            return new ResponseEntity<>(realEstateDTOS, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<Page<RealEstateDTO>> getRealEstatesWithCountRooms(
+            @PathVariable int offset, @PathVariable int pageSize,
+            @RequestParam int leftCountRooms, @RequestParam int rightCountRooms) {
+        Page<RealEstate> realEstates = realEstateService.findRealEstatesWithCountRooms(
+                leftCountRooms, rightCountRooms, offset, pageSize);
+        return getPageResponseEntity(realEstates);
+
     }
     @GetMapping("/allBy/{userId}/{offset}/{pageSize}")
     public ResponseEntity<Page<RealEstateDTO>> getRealEstatesByUserId(@PathVariable long userId,
                                                                       @PathVariable int offset,
                                                                       @PathVariable int pageSize) {
-        if (!realEstateService.findRealEstatesByUserId(userId, offset, pageSize).isEmpty()) {
-            RealEstateMapper realEstateMapper = new RealEstateMapper();
-            Page<RealEstate> realEstates = realEstateService.findRealEstatesByUserId(userId, offset, pageSize);
-            Page<RealEstateDTO> realEstateDTOS = realEstates.map(realEstateMapper::mapRealEstateToRealEstateDTO);
-            return new ResponseEntity<>(realEstateDTOS, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        Page<RealEstate> realEstates=realEstateService.findRealEstatesByUserId(userId, offset, pageSize);
+        return getPageResponseEntity(realEstates);
+
     }
 
     @GetMapping("/{id}")
@@ -96,32 +93,48 @@ public class RealEstateController {
 
 
     @PostMapping("/new")
-    public ResponseEntity createRealEstate(@RequestBody @Valid RealEstateDTO realEstateDTO, BindingResult bindingResult) {
+    public ResponseEntity<?> createRealEstate(@RequestBody @Valid RealEstateDTO realEstateDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         RealEstateMapper realEstateMapper = new RealEstateMapper();
-        realEstateService.saveRealEstate(realEstateMapper.mapRealEstateDTOToRealEstate(realEstateDTO));
+        RealEstate realEstate=realEstateMapper.mapRealEstateDTOToRealEstate(realEstateDTO);
+        realEstate.setUserId(customUserDetailsService.getAuthenticatedUser().getId());
+        realEstateService.saveRealEstate(realEstate);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
 
     @PutMapping("/{id}/edit")
-    public ResponseEntity editRealEstate(@PathVariable("id") long id, @RequestBody @Valid RealEstateDTO realEstateDTO,
+    public ResponseEntity<?> editRealEstate(@PathVariable("id") long id, @RequestBody @Valid RealEstateDTO realEstateDTO,
                                          BindingResult bindingResult) {
+        if (!customUserDetailsService.getAuthenticatedUser().getRole().equals("ADMIN")) {
+            if (realEstateService.findRealEstateById(id).getUserId() != customUserDetailsService.getAuthenticatedUser().getId()) {
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            }
+        }
+
 
         if (bindingResult.hasErrors()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         RealEstateMapper realEstateMapper = new RealEstateMapper();
-        if(realEstateService.updateRealEstate(id, realEstateMapper.mapRealEstateDTOToRealEstate(realEstateDTO))) {
-            return new ResponseEntity(HttpStatus.CREATED);
+        RealEstate realEstate=realEstateMapper.mapRealEstateDTOToRealEstate(realEstateDTO);
+        realEstate.setUserId(customUserDetailsService.getAuthenticatedUser().getId());
+        if(realEstateService.updateRealEstate(id, realEstate)) {
+            return new ResponseEntity<>(HttpStatus.CREATED);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @DeleteMapping("/{id}/delete")
-    public ResponseEntity deleteRealEstate(@PathVariable("id") long id) {
+    public ResponseEntity<?> deleteRealEstate(@PathVariable("id") long id) {
+        if (!customUserDetailsService.getAuthenticatedUser().getRole().equals("ADMIN")) {
+            if (realEstateService.findRealEstateById(id).getUserId() != customUserDetailsService.getAuthenticatedUser().getId()) {
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            }
+        }
+
         if (realEstateService.deleteRealEstate(id)) {
             return new ResponseEntity<>(HttpStatus.OK);
         }

@@ -4,6 +4,7 @@ import by.bsu.RealEstate.Mappers.CreditCardMapper;
 import by.bsu.RealEstate.Models.CreditCard;
 import by.bsu.RealEstate.Models.DTO.CreditCardDTO;
 import by.bsu.RealEstate.Services.CreditCartService;
+import by.bsu.RealEstate.Services.CustomUserDetailsService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,39 +15,58 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/credit-card")
+@RequestMapping("/card")
 public class CreditCardController {
-    public final CreditCartService creditCartService;
+    private final CreditCartService creditCartService;
+    private final CustomUserDetailsService customUserDetailsService;
 
-    public CreditCardController(CreditCartService creditCartService) {
+    public CreditCardController(CreditCartService creditCartService, CustomUserDetailsService customUserDetailsService) {
         this.creditCartService = creditCartService;
+        this.customUserDetailsService = customUserDetailsService;
     }
 
     @GetMapping("/all")
     public ResponseEntity<List<CreditCardDTO>> getAllCards() {
-        if (creditCartService.findCreditCards().isEmpty())
+        List<CreditCard> creditCards=creditCartService.findCreditCards();
+        if (creditCards.isEmpty())
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         List<CreditCardDTO> creditCardDTOS = new ArrayList<>();
         CreditCardMapper creditCardMapper = new CreditCardMapper();
-        for (CreditCard creditCard : creditCartService.findCreditCards()) {
+        for (CreditCard creditCard : creditCards) {
             creditCardDTOS.add(creditCardMapper.mapCreditCardToCreditCadDTO(creditCard));
         }
         return new ResponseEntity<>(creditCardDTOS, HttpStatus.OK);
     }
+
     @GetMapping("/all/{userId}")
     public ResponseEntity<List<CreditCardDTO>> getCreditCardsByUserId(@PathVariable long userId) {
-        if (!creditCartService.findCreditCardsByUserId(userId).isEmpty()) {
-            List<CreditCardDTO> creditCardDTOS = new ArrayList<>();
-            CreditCardMapper creditCardMapper = new CreditCardMapper();
-            for (CreditCard creditCard : creditCartService.findCreditCardsByUserId(userId)) {
-                creditCardDTOS.add(creditCardMapper.mapCreditCardToCreditCadDTO(creditCard));
+        if (!customUserDetailsService.getAuthenticatedUser().getRole().equals("ADMIN")) {
+            if (userId != customUserDetailsService.getAuthenticatedUser().getId()) {
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
             }
-            return new ResponseEntity<>(creditCardDTOS, HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        List<CreditCard> creditCards=creditCartService.findCreditCardsByUserId(userId);
+
+        if (creditCards.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        List<CreditCardDTO> creditCardDTOS = new ArrayList<>();
+        CreditCardMapper creditCardMapper = new CreditCardMapper();
+        for (CreditCard creditCard : creditCartService.findCreditCardsByUserId(userId)) {
+            creditCardDTOS.add(creditCardMapper.mapCreditCardToCreditCadDTO(creditCard));
+        }
+        return new ResponseEntity<>(creditCardDTOS, HttpStatus.OK);
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<CreditCardDTO> getCreditCardById(@PathVariable long id) {
+
+        if (!customUserDetailsService.getAuthenticatedUser().getRole().equals("ADMIN")) {
+            if (creditCartService.findCreditCardById(id).getUserId() != customUserDetailsService.getAuthenticatedUser().getId()) {
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            }
+        }
         CreditCardMapper creditCardMapper = new CreditCardMapper();
         CreditCardDTO creditCardDTO = creditCardMapper.mapCreditCardToCreditCadDTO(
                 creditCartService.findCreditCardById(id));
@@ -54,29 +74,50 @@ public class CreditCardController {
     }
 
     @PostMapping("/new")
-    public ResponseEntity createCreditCard(@RequestBody @Valid CreditCardDTO creditCardDTO,
-                                           BindingResult bindingResult) {
-        if (bindingResult.hasErrors())
+    public ResponseEntity<?> createCreditCard(@RequestBody @Valid CreditCardDTO creditCardDTO,
+                                              BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         CreditCardMapper creditCardMapper = new CreditCardMapper();
         CreditCard creditCard = creditCardMapper.mapCreditCardDtoToCreditCard(creditCardDTO);
+        creditCard.setUserId(customUserDetailsService.getAuthenticatedUser().getId());
         creditCartService.saveCreditCard(creditCard);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping("/{id}/edit")
-    public ResponseEntity editCreditCard(@PathVariable long id, @RequestBody @Valid CreditCardDTO creditCardDTO,
-                                         BindingResult bindingResult) {
-        if (bindingResult.hasErrors())
+    public ResponseEntity<?> editCreditCard(@PathVariable long id, @RequestBody @Valid CreditCardDTO creditCardDTO,
+                                            BindingResult bindingResult) {
+        if (!customUserDetailsService.getAuthenticatedUser().getRole().equals("ADMIN")) {
+            if (creditCartService.findCreditCardById(id).getUserId() != customUserDetailsService.getAuthenticatedUser().getId()) {
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            }
+        }
+
+        if (bindingResult.hasErrors()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         CreditCardMapper creditCardMapper = new CreditCardMapper();
-        if (creditCartService.updateCreditCard(id, creditCardMapper.mapCreditCardDtoToCreditCard(creditCardDTO)))
+        CreditCard creditCard= creditCardMapper.mapCreditCardDtoToCreditCard(creditCardDTO);
+        creditCard.setUserId(customUserDetailsService.getAuthenticatedUser().getId());
+        if (creditCartService.updateCreditCard(id,creditCard )) {
             return new ResponseEntity<>(HttpStatus.OK);
-        else
+        } else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
+
     @DeleteMapping("/{id}/delete")
-    public ResponseEntity deleteCreditCard(@PathVariable long id){
+    public ResponseEntity<?> deleteCreditCard(@PathVariable long id) {
+        if (!customUserDetailsService.getAuthenticatedUser().getRole().equals("ADMIN")) {
+            if (creditCartService.findCreditCardById(id).getUserId() != customUserDetailsService.getAuthenticatedUser().getId()) {
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            }
+        }
+
         if (creditCartService.deleteCreditCard(id))
             return new ResponseEntity<>(HttpStatus.OK);
         else

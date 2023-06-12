@@ -2,35 +2,34 @@ package by.bsu.RealEstate.Services;
 
 import by.bsu.RealEstate.Models.User;
 import by.bsu.RealEstate.Repositories.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 
 @Service
-public class UserService {
+@RequiredArgsConstructor
+public class UserService  {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
 
-    }
 
-    public List<User> findUsers() {
-        return userRepository.findAll();
-    }
 
     public Page<User> findUsersWithPagination(int offset, int pageSize) {
         return userRepository.findAll(PageRequest.of(offset, pageSize));
     }
 
-    public User findUserById(Long id) {
+    public User findUserById(long    id) {
         return userRepository.findById(id).orElseThrow(RuntimeException::new);
     }
 
     public void saveUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole("USER");
         userRepository.save(user);
     }
 
