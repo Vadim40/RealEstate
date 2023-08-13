@@ -1,5 +1,6 @@
 package by.bsu.RealEstate.Services;
 
+import by.bsu.RealEstate.Exceptions.RealEstateNotFoundException;
 import by.bsu.RealEstate.Repositories.RealEstateRepository;
 import by.bsu.RealEstate.Models.RealEstate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +52,7 @@ public class RealEstateService {
         return realEstateRepository.findRealEstatesByUserId(id, PageRequest.of(offset,pageSize));
     }
     public RealEstate findRealEstateById(long id) {
-        return realEstateRepository.findById(id).orElseThrow(RuntimeException::new);
+        return realEstateRepository.findById(id).orElseThrow(()->new RealEstateNotFoundException("real estate not found"));
     }
 
     public void saveRealEstate(RealEstate realEstate) {
@@ -59,24 +60,17 @@ public class RealEstateService {
     }
 
 
-    public boolean updateRealEstate(long id, RealEstate realEstate) {
-        if (realEstateRepository.findById(id).isPresent()) {
+    public RealEstate updateRealEstate(long id, RealEstate realEstate) {
             RealEstate realEstateUpdate = findRealEstateById(id);
             realEstateUpdate.setType(realEstate.getType());
             realEstateUpdate.setCountRooms(realEstate.getCountRooms());
             realEstateUpdate.setSquare(realEstate.getSquare());
             realEstateUpdate.setPrice(realEstate.getPrice());
-            realEstateRepository.save(realEstateUpdate);
-            return true;
-        }
-        return false;
+           return realEstateRepository.save(realEstateUpdate);
     }
 
-    public boolean deleteRealEstate(long id) {
-        if (realEstateRepository.findById(id).isPresent()) {
-            realEstateRepository.deleteById(id);
-            return true;
-        }
-        return false;
+    public void deleteRealEstate(long id) {
+       RealEstate realEstate= findRealEstateById(id);
+       realEstateRepository.delete(realEstate);
     }
 }

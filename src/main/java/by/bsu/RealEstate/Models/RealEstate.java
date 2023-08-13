@@ -1,6 +1,10 @@
 package by.bsu.RealEstate.Models;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -8,6 +12,10 @@ import org.hibernate.annotations.Where;
 @Table(name = "real_estates")
 @SQLDelete(sql = "UPDATE real_estates SET deleted = true WHERE id=?")
 @Where(clause = "deleted=false")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class RealEstate {
     @Id
     @SequenceGenerator(
@@ -23,95 +31,18 @@ public class RealEstate {
     @Column(name = "type")
     private String type;
     @Column(name = "price")
-    private Integer price;
+    private int price;
     @Column(name = "square")
-    private Integer square;
+    private int square;
     @Column(name = "count_rooms")
 
-    private Integer countRooms;
+    private int countRooms;
     @Column(name = "user_id")
     private long userId;
     @Column(name = "deleted")
     private boolean deleted = Boolean.FALSE;
 
-    public RealEstate() {
-    }
-
-    public RealEstate(long id, String type, Integer price, Integer square, Integer countRooms, boolean deleted) {
-        this.id = id;
-        this.type = type;
-        this.price = price;
-        this.square = square;
-        this.countRooms = countRooms;
-        this.deleted = deleted;
-    }
 
 
-    public long getId() {
-        return id;
-    }
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public Integer getPrice() {
-        return price;
-    }
-
-    public void setPrice(Integer price) {
-        this.price = price;
-    }
-
-    public Integer getSquare() {
-        return square;
-    }
-
-    public void setSquare(Integer square) {
-        this.square = square;
-    }
-
-    public Integer getCountRooms() {
-        return countRooms;
-    }
-
-    public void setCountRooms(Integer countRooms) {
-        this.countRooms = countRooms;
-    }
-
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
-    }
-
-    @Override
-    public String toString() {
-        return "RealEstate{" +
-                "id=" + id +
-                ", type='" + type + '\'' +
-                ", price=" + price +
-                ", square=" + square +
-                ", countRooms=" + countRooms +
-                '}';
-    }
 }

@@ -16,4 +16,6 @@ public interface RealEstateRepository extends JpaRepository<RealEstate, Long> {
      Page<RealEstate> findRealEstatesByCountRooms(int leftCountRooms, int rightCountRooms, Pageable pageable);
 
      Page<RealEstate> findRealEstatesByUserId(long userId, Pageable pageable);
+
+
 }

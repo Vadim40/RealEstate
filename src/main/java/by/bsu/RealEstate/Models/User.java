@@ -3,6 +3,7 @@ package by.bsu.RealEstate.Models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import lombok.Builder;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,6 +17,7 @@ import java.util.Collections;
 @Table(name = "users")
 @SQLDelete(sql = "UPDATE users SET deleted = true WHERE id=?")
 @Where(clause = "deleted=false")
+@Builder
 public class User implements UserDetails  {
 
     @Id

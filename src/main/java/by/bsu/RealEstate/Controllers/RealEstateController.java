@@ -121,10 +121,8 @@ public class RealEstateController {
         RealEstateMapper realEstateMapper = new RealEstateMapper();
         RealEstate realEstate=realEstateMapper.mapRealEstateDTOToRealEstate(realEstateDTO);
         realEstate.setUserId(customUserDetailsService.getAuthenticatedUser().getId());
-        if(realEstateService.updateRealEstate(id, realEstate)) {
+        realEstateService.updateRealEstate(id, realEstate) ;
             return new ResponseEntity<>(HttpStatus.CREATED);
-        }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @DeleteMapping("/{id}/delete")
@@ -135,10 +133,8 @@ public class RealEstateController {
             }
         }
 
-        if (realEstateService.deleteRealEstate(id)) {
+        realEstateService.deleteRealEstate(id);
             return new ResponseEntity<>(HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
 }
